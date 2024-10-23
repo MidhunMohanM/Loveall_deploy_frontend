@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import logo1 from '../images/logo1.jpg'; // Import the image
 
 export default function LoveAllRecommendedBrands(props) {
   const [brands, setBrands] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // console.log(props)
     setBrands(props.data);
     setError(props.error);
-    // console.log(brands)
-
-  }, [props, brands])
-
+  }, [props]);
 
   if (error) {
     return <div className="text-red-500">Error: {error}</div>;
@@ -28,8 +25,8 @@ export default function LoveAllRecommendedBrands(props) {
             <div key={brand.store_id} className="flex flex-col items-center">
               <div className="w-24 h-24 relative mb-2 rounded-lg overflow-hidden">
                 <img
-                  src=''
-                  alt=''
+                  src={logo1} // Use the imported image
+                  alt={`${brand.store_name} Logo`} // Dynamic alt text
                   className="w-full h-full object-cover bg-[#971132]"
                 />
               </div>
