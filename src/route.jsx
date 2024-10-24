@@ -13,7 +13,7 @@
   import Donation from "./pages/Donation";
   import Volunteer from "./pages/Volunteer";
   import NotFound from './pages/NotFound';
-  import Dashboard from './pages/Dashboard';
+  import Dashboard1 from './pages/Dashboard';
   import Account from './pages/Account';
   import EditPersonalInfo from './pages/EditPersonalInfo';
   import EditAddress from './pages/EditAddress';
@@ -45,7 +45,7 @@
 
             {/* Profile and its sub-routes */}
             <Route path="/profile" element={<Profile />}>
-              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="dashboard" element={<Dashboard1 />} />
               <Route path="account" element={<Account />} />
               <Route path="account/edit-personal-info" element={<EditPersonalInfo />} />
               <Route path="account/edit-address" element={<EditAddress />} />

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getToken } from '../utils/tokenManager';
 
 const InputField = ({ label, name, value, onChange }) => (
   <div className="mb-6">
@@ -20,24 +21,82 @@ const InputField = ({ label, name, value, onChange }) => (
 const EditPersonalInfo = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    firstName: 'Karthik',
-    lastName: 'Krishnamoorthi',
-    email: 'itskarthik@atria.com',
-    phoneNumber: '9999-888-888',
-    dateOfBirth: '17 October 1990',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phoneNumber: '',
+    dateOfBirth: '',
     gender: 'Male',
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = getToken();
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/profile/edit-personal-info`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+        const data = await response.json();
+        setFormData({
+          firstName: data.first_name,
+          lastName: data.last_name,
+          email: data.email,
+          phoneNumber: data.phone_number,
+          dateOfBirth: data.date_of_birth,
+          gender: 'Male', // Hardcoded as per requirement
+        });
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would typically send the updated data to your backend
-    console.log('Updated personal info:', formData);
-    navigate('/profile/account');
+    try {
+      const token = getToken();
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/profile/edit-personal-info`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          email: formData.email,
+          phone_number: formData.phoneNumber,
+          date_of_birth: formData.dateOfBirth,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to update user data');
+      }
+      navigate('/profile/account');
+    } catch (err) {
+      setError(err.message);
+    }
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">

@@ -34,7 +34,7 @@ const OTPSent = () => {
 
       if (response.ok) {
         console.log('OTP verified successfully');
-        navigate('/customer-dashboard'); // or merchant-dashboard
+        navigate('/'); // or merchant-dashboard
       } else {
         const errorData = await response.json();
         alert(`Failed to verify OTP: ${errorData.message}`);
