@@ -33,10 +33,10 @@ export default function Header() {
                 <Link to="/stores" className="hover:text-[#FF6B98]">Stores</Link>
               </li>
               <li>
-                <Link to="/charity-media" className="hover:text-[#FF6B98]">Charity Media</Link>
+                <Link to="/charity" className="hover:text-[#FF6B98]">Charity Media</Link>
               </li>
               <li>
-                <Link to="/Linkbout" className="hover:text-[#FF6B98]">About us</Link>
+                <Link to="/about" className="hover:text-[#FF6B98]">About us</Link>
               </li>
             </ul>
           </nav>
@@ -86,7 +86,7 @@ export default function Header() {
                 <Link to="/stores" className="hover:text-[#FF6B98]">Stores</Link>
               </li>
               <li>
-                <Link to="/charity-media" className="hover:text-[#FF6B98]">Charity Media</Link>
+                <Link to="/charity" className="hover:text-[#FF6B98]">Charity Media</Link>
               </li>
               <li>
                 <Link to="/about" className="hover:text-[#FF6B98]">About us</Link>

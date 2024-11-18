@@ -273,7 +273,11 @@ const Offer = () => {
                 />
               ))
             ) : (
-              <p>No Offers Available</p>
+              <>
+                <div className="w-72 h-72 bg-slate-400"></div>
+                <div className="w-72 h-72 bg-slate-400"></div>
+                <div className="w-72 h-72 bg-slate-400"></div>
+              </>
             )}
           </div>
 

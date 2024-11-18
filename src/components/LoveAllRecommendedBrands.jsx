@@ -10,9 +10,7 @@ export default function LoveAllRecommendedBrands(props) {
     setError(props.error);
   }, [props]);
 
-  if (error) {
-    return <div className="text-red-500">Error: {error}</div>;
-  }
+  if (error) return <div className="text-center py-8 text-red-600">Error: {error.message}. Please check your server connection and try again.</div>;
 
   return (
     <section className="mb-8">

@@ -26,7 +26,7 @@ export default function TrendingOffers(props) {
   };
 
   if (isLoading) return <div className="text-center py-8">Loading trending offers...</div>;
-  if (error) return <div className="text-center py-8 text-red-600">Error: {error}. Please check your server connection and try again.</div>;
+  if (error) return <div className="text-center py-8 text-red-600">Error: {error.message}. Please check your server connection and try again.</div>;
 
   return (
     <section className="mb-8 px-4 md:px-6 lg:px-8">

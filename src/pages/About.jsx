@@ -48,7 +48,7 @@ const About = () => {
                 Every card purchased is a step toward a hunger-free Bangalore. Your enjoyment becomes
                 someone else's nourishment.
               </p>
-              <button className="mt-4 bg-[#FF6B6B] hover:bg-[#FF8787] text-white">Purchase card</button>
+              <button className="mt-4 bg-[#FF6B6B] hover:bg-[#FF8787] text-white px-4 py-2 rounded-md">Purchase card</button>
             </div>
             <div className="w-full md:w-1/2 md:pl-8">
                 <img src="" alt="" className='bg-[#971132] h-80 rounded-lg' />
@@ -96,4 +96,4 @@ const About = () => {
   )
 }
 
-export default About
+export default About;
