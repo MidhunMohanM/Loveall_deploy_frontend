@@ -31,7 +31,7 @@ const Registration2 = () => {
               className="w-48 h-48 mb-4 object-contain"
             />
             <button
-              onClick={() => navigate('/merchant-registration')}
+              onClick={() => navigate('/business/register')}
               className="w-full py-2 px-4 bg-gradient-to-b from-[#5F0013] via-[#C71B2F] to-[#E34234] text-white font-bold rounded-full hover:opacity-90 transition duration-300"
             >
               As a Merchant

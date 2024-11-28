@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { login, forgetpassword, sendOtp, changePasswordAPI } from '../../service/authentication.js';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const SuccessPopup = ({ onClose }) => (
   <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
     <div className="bg-white p-6 rounded-lg shadow-lg text-center ">
-    <div class="flex justify-center items-center ">
-    <img src="https://optimworks.com/wp-content/uploads/2022/05/Cyber-Security-Testing.png" alt="Success" class="w-32 mb-4" />
-</div>
-
+      <div className="flex justify-center items-center ">
+        <img src="https://optimworks.com/wp-content/uploads/2022/05/Cyber-Security-Testing.png" alt="Success" className="w-32 mb-4" />
+      </div>
       <h2 className="text-lg font-bold">Password Updated!</h2>
       <p>Your password has been successfully changed.<br></br> You can now access all the features of your business account using your new password.</p>
       <button
@@ -34,19 +34,16 @@ const ChangePasswordPopup = ({ onClose, email }) => {
     }
 
     try {
-      // Call the API with separate parameters
       const response = await changePasswordAPI(email, currentPassword, newPassword);
       setSuccessMessage(response.message);
-      setErrorMessage(''); // Clear previous error messages
-      // Clear input fields
+      setErrorMessage('');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
 
-      // Dismiss the popup after a successful password change
       setTimeout(() => {
-        onClose(); // Close the popup
-      }, 2000); // Optional: Delay for 2 seconds to show success message before closing
+        onClose();
+      }, 2000);
 
     } catch (error) {
       setErrorMessage(error.message || 'Failed to change password.');
@@ -122,7 +119,7 @@ const ChangePasswordPopup = ({ onClose, email }) => {
 };
 
 export default function LoginForm() {
-  const [email, setEmail] = useState(''); // Email state
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [forgotPasswordStage, setForgotPasswordStage] = useState(0);
   const [otp, setOtp] = useState('');
@@ -132,24 +129,27 @@ export default function LoginForm() {
   const [successMessage, setSuccessMessage] = useState('');
   const [isSuccessPopupVisible, setIsSuccessPopupVisible] = useState(false);
   const [isChangePasswordPopupVisible, setIsChangePasswordPopupVisible] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const response = await login(email, password);
-      alert(response.message); // Assuming response.message contains the success message
+      console.log('Login Response:', response);
+      navigate('/business');
     } catch (error) {
+      console.error('Login Error:', error.message);
       setErrorMessage(error.message || 'Login failed. Please check your credentials.');
       if (error.message === "Kindly change your password.") {
-        setIsChangePasswordPopupVisible(true); // Show change password popup
+        setIsChangePasswordPopupVisible(true);
       }
     }
   };
 
   const handleForgotPassword = () => {
     setForgotPasswordStage(1);
-    setErrorMessage(''); // Reset error message
-    setSuccessMessage(''); // Reset success message
+    setErrorMessage('');
+    setSuccessMessage('');
   };
 
   const handleSendOTP = async () => {
@@ -157,8 +157,9 @@ export default function LoginForm() {
       await sendOtp(email);
       setSuccessMessage('OTP sent successfully. Please check your email.');
       setForgotPasswordStage(2);
-      setErrorMessage(''); // Reset error message
+      setErrorMessage('');
     } catch (error) {
+      console.error('Send OTP Error:', error.message);
       setErrorMessage(error.response?.data?.message || 'Failed to send OTP. Please check your email.');
     }
   };
@@ -176,11 +177,12 @@ export default function LoginForm() {
     };
 
     try {
-      await forgetpassword(payload); // Call to forgetpassword API
-      setIsSuccessPopupVisible(true); // Show success popup
-      setForgotPasswordStage(0); // Reset the stage for future use
+      await forgetpassword(payload);
+      setIsSuccessPopupVisible(true);
+      setForgotPasswordStage(0);
       resetFormFields();
     } catch (error) {
+      console.error('Reset Password Error:', error.message);
       setErrorMessage(error.message || 'Failed to reset password. Please try again.');
     }
   };
@@ -222,7 +224,7 @@ export default function LoginForm() {
                     placeholder="Business Email"
                     className="w-full rounded-lg p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#8B1539]"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)} // Update email state
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
@@ -269,7 +271,7 @@ export default function LoginForm() {
                     placeholder="Business Email"
                     className="w-full rounded-lg p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#8B1539]"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)} // Update email state
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
@@ -336,10 +338,6 @@ export default function LoginForm() {
             )}
 
             <div className="text-center space-y-4">
-              {/* <a href="/login-otp" className="text-[#8B1539] hover:underline block text-sm">
-                Log in with OTP
-              </a> */}
-
               <div className="text-sm">
                 Don&apos;t have an account?{' '}
                 <a href="register" className="text-[#8B1539] hover:underline">
@@ -361,3 +359,4 @@ export default function LoginForm() {
     </div>
   );
 }
+

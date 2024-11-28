@@ -1,23 +1,78 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import BusinessProfileHeader from '../../components/BusinessProfileHeader';
+import { getToken } from '../../utils/tokenManager';
 
 const BusinessProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    businessName: 'fuckall',
-    address: '456 MG Road, Bangalore',
-    city: 'Bangalore',
-    state: 'Karnataka',
-    zipCode: '560001',
-    phoneNumber: '9544693196',
-    emailAddress: 'midhunmohanmararmp@gmail.com',
-    businessDescription: 'None'
+    business_name: '',
+    business_email: '',
+    business_type: '',
+    entity_type: '',
+    contact_number: '',
+    business_address: '',
+    city: '',
+    state: '',
+    zip_code: '',
+    gstin: '',
+    tan: '',
+    business_purpose: '',
+    owner_name: '',
+    owner_contact_number: ''
   });
-  const [lastUpdated, setLastUpdated] = useState(new Date().toLocaleDateString());
+  const [lastUpdated, setLastUpdated] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchProfile();
+    }
+  }, [isAuthenticated]);
+
+  const fetchBusinessProfile = async () => {
+    const token = getToken();
+    if (!token) {
+      console.error('No authentication token found');
+      throw new Error('No authentication token found');
+    }
+
+    console.log('Token:', token);
+
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/Buss/profile`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch business profile');
+    }
+
+    return response.json();
+  };
+
+  const fetchProfile = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchBusinessProfile();
+      console.log('Fetched profile data:', data); // Add this line for debugging
+      setFormData(data);
+      setLastUpdated(new Date(data.updated_at).toLocaleDateString());
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching profile:', err); // Add this line for debugging
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -27,11 +82,50 @@ const BusinessProfile = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsEditing(false);
-    setLastUpdated(new Date().toLocaleDateString());
+    setLoading(true);
+    try {
+      const token = getToken();
+      if (!token) {
+        console.error('No authentication token found');
+        throw new Error('No authentication token found');
+      }
+
+      console.log('Token:', token);
+
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/Buss/update-profile`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update business profile');
+      }
+
+      const updatedData = await response.json();
+      setFormData(updatedData);
+      setLastUpdated(new Date(updatedData.updated_at).toLocaleDateString());
+      setIsEditing(false);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500 text-center">{error}</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -52,109 +146,24 @@ const BusinessProfile = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="businessName" className="block text-sm font-medium mb-1">Business Name</label>
-            <input
-              type="text"
-              id="businessName"
-              name="businessName"
-              value={formData.businessName}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              className="w-full p-2 border rounded-md focus:ring-1 focus:ring-red-900 disabled:bg-gray-50"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="address" className="block text-sm font-medium mb-1">Address</label>
-            <input
-              type="text"
-              id="address"
-              name="address"
-              value={formData.address}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              className="w-full p-2 border rounded-md focus:ring-1 focus:ring-red-900 disabled:bg-gray-50"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="city" className="block text-sm font-medium mb-1">City</label>
-            <input
-              type="text"
-              id="city"
-              name="city"
-              value={formData.city}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              className="w-full p-2 border rounded-md focus:ring-1 focus:ring-red-900 disabled:bg-gray-50"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="state" className="block text-sm font-medium mb-1">State</label>
-            <input
-              type="text"
-              id="state"
-              name="state"
-              value={formData.state}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              className="w-full p-2 border rounded-md focus:ring-1 focus:ring-red-900 disabled:bg-gray-50"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="zipCode" className="block text-sm font-medium mb-1">ZIP Code</label>
-            <input
-              type="text"
-              id="zipCode"
-              name="zipCode"
-              value={formData.zipCode}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              className="w-full p-2 border rounded-md focus:ring-1 focus:ring-red-900 disabled:bg-gray-50"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="phoneNumber" className="block text-sm font-medium mb-1">Phone Number</label>
-            <input
-              type="tel"
-              id="phoneNumber"
-              name="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              className="w-full p-2 border rounded-md focus:ring-1 focus:ring-red-900 disabled:bg-gray-50"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="emailAddress" className="block text-sm font-medium mb-1">Email Address</label>
-            <input
-              type="email"
-              id="emailAddress"
-              name="emailAddress"
-              value={formData.emailAddress}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              className="w-full p-2 border rounded-md focus:ring-1 focus:ring-red-900 disabled:bg-gray-50"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="businessDescription" className="block text-sm font-medium mb-1">Business Description</label>
-            <textarea
-              id="businessDescription"
-              name="businessDescription"
-              value={formData.businessDescription}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              rows="3"
-              className="w-full p-2 border rounded-md focus:ring-1 focus:ring-red-900 disabled:bg-gray-50"
-            />
-          </div>
+          {Object.entries(formData).map(([key, value]) => (
+            key !== 'updated_at' && (
+              <div key={key}>
+                <label htmlFor={key} className="block text-sm font-medium mb-1">
+                  {key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                </label>
+                <input
+                  type={key.includes('email') ? 'email' : 'text'}
+                  id={key}
+                  name={key}
+                  value={value || ''}
+                  onChange={handleInputChange}
+                  disabled={!isEditing}
+                  className="w-full p-2 border rounded-md focus:ring-1 focus:ring-red-900 disabled:bg-gray-50"
+                />
+              </div>
+            )
+          ))}
 
           {isEditing && (
             <div className="flex justify-end pt-4">

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Pie } from 'react-chartjs-2'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 import { Star, Search, Calendar } from 'lucide-react'
@@ -18,6 +18,7 @@ const spendingData = {
     },
   ],
 }
+
 
 const feedbackData = {
   success: true,
@@ -53,11 +54,14 @@ const feedbackData = {
 }
 
 const StarRating = ({ rating }) => {
+  useEffect(() => {
+    // const feedbackData = await
+  }, [])
   return (
     <div className="flex">
       {[1, 2, 3, 4, 5].map((star) => (
         <Star
-          key={star}
+        key={star}
           className={`w-5 h-5 ${star <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
         />
       ))}
